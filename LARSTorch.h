@@ -16,7 +16,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface LATorch : NSObject {
+@interface LARSTorch : NSObject {
     
 @private
 
