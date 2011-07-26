@@ -8,7 +8,7 @@ It's a LED driver for iOS.  Does it need more of a description than that?
 
 ## Public Methods
  - `- (BOOL)isTorchOn` - Replies if the torch is currently on (`YES`) or off (`NO`)
- - `- (BOOL)isInturrupted` - Replies if the AVCaptureSession for the torch has been inturrupted
+ - `- (BOOL)isInturrupted` - Replies if the `AVCaptureSession` for the torch has been inturrupted by a system event
  - `- (void)setTorchOn:(BOOL)torchOn` - Method to light or extinguish the torch
 
 That's it.
