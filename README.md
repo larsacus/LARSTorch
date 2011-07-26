@@ -4,7 +4,7 @@
 It's a LED driver for iOS.  Does it need more of a description than that?
 
 ## Usage
-`[[LARSTorch alloc] initWithTorchOn:YES];'
+`[[LARSTorch alloc] initWithTorchOn:YES];`
 
 ## Public Methods
  - `- (BOOL)isTorchOn` - Replies if the torch is currently on (`YES`) or off (`NO`)
