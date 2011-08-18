@@ -29,8 +29,6 @@
 #endif
     id _delegate;
     BOOL _torchStateOnResume;
-
-    
 }
 
 
