@@ -191,6 +191,10 @@
 #endif
 }
 
+- (void)setIdleTimerDisabled:(BOOL)disabled{
+    [UIApplication sharedApplication].idleTimerDisabled = disabled;
+}
+
 -(void)flashlightSessionResumeFromInturrupt{
 	//NSLog(@"Flashlight is resuming from inturruption");
     [self setTorchOn:[self torchStateOnResume]];

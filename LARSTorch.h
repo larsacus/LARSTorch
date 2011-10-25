@@ -47,5 +47,6 @@
 - (void)setTorchOn:(BOOL)torchOn;
 - (BOOL)isTorchOn;
 - (BOOL)isInturrupted;
+- (void)setIdleTimerDisabled:(BOOL)disabled;
 
 @end
