@@ -59,10 +59,10 @@
 #if !TARGET_IPHONE_SIMULATOR
     if ([self systemVersion] >= 5.0) {
         //>5.0 doesn't require AVCaptureSession
-        return [[self torchDevice] torchMode] == AVCaptureTorchModeOn;
+        return [self.torchDevice torchMode] == AVCaptureTorchModeOn;
     }
     return  [[self torchSession] isRunning] && 
-            ([[self torchDevice] torchMode] == AVCaptureTorchModeOn);
+            ([self.torchDevice torchMode] == AVCaptureTorchModeOn);
 #else
     return NO;
 #endif
@@ -76,14 +76,21 @@
 #endif
 }
 
-- (void)setTorchOn:(BOOL)torchOn{
 #if !TARGET_IPHONE_SIMULATOR
-    if (![self torchDevice]) {
-        //NSLog(@"Creating device");
+- (AVCaptureDevice *)torchDevice{
+    if (_torchDevice == nil) {
+//        NSLog(@"Creating device");
         _torchDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        //NSLog(@"Done!");
+//        NSLog(@"Device created!");
     }
     
+    return _torchDevice;
+}
+
+#endif
+
+- (void)setTorchOn:(BOOL)torchOn{
+#if !TARGET_IPHONE_SIMULATOR
     if ([self systemVersion] < 5.0f){
         if (![self torchSession]) {
             //NSLog(@"Creating session");
@@ -91,7 +98,7 @@
             //NSLog(@"Done!");
         }
         
-        if ([self torchDevice] && [[self torchDevice] hasTorch]) {
+        if (self.torchDevice && [self.torchDevice hasTorch]) {
 
             //NSLog(@"Device has useable torch!");
             //set session preset to lowest allowed to conserve system resources
@@ -100,8 +107,8 @@
             
             NSError *lockError = nil;
             //NSLog(@"Locking device for configuration");
-            if(![[self torchDevice] lockForConfiguration:&lockError]){
-                //NSLog(@"Lock error: %@\nReason: %@", [lockError localizedDescription], [lockError localizedFailureReason]);
+            if(![self.torchDevice lockForConfiguration:&lockError]){
+                NSLog(@"Lock error: %@\nReason: %@", [lockError localizedDescription], [lockError localizedFailureReason]);
             }
             
             //NSLog(@"Beginning configuration");
@@ -113,10 +120,10 @@
                 if (![self torchDeviceInput]) {
                     //NSLog(@"Creating...");
                     NSError *deviceError = nil;
-                    _torchDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:[self torchDevice] error:&deviceError];
+                    _torchDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.torchDevice error:&deviceError];
                     
                     if (deviceError) {
-                        //NSLog(@"Device Error: %@\nReason: %@", [deviceError localizedDescription], [deviceError localizedFailureReason]);
+                        NSLog(@"Device Error: %@\nReason: %@", [deviceError localizedDescription], [deviceError localizedFailureReason]);
                     }
                     //NSLog(@"Done!");
                 }
@@ -138,16 +145,16 @@
             
             //NSLog(@"Setting torch mode to %@", torchOn ? @"ON" : @"OFF");
             if (torchOn) {
-                [[self torchDevice] setTorchMode:AVCaptureTorchModeOn];
-                [[self torchDevice] setFlashMode:AVCaptureFlashModeOn];
+                [self.torchDevice setTorchMode:AVCaptureTorchModeOn];
+                [self.torchDevice setFlashMode:AVCaptureFlashModeOn];
             }
             else {
-                [[self torchDevice] setTorchMode:AVCaptureTorchModeOff];
-                [[self torchDevice] setFlashMode:AVCaptureFlashModeOff];
+                [self.torchDevice setTorchMode:AVCaptureTorchModeOff];
+                [self.torchDevice setFlashMode:AVCaptureFlashModeOff];
             }
             
             //NSLog(@"Unlocking device for configuration");
-            [[self torchDevice] unlockForConfiguration];
+            [self.torchDevice unlockForConfiguration];
             
             //NSLog(@"Committing configuration");
             [[self torchSession] commitConfiguration];
@@ -166,28 +173,25 @@
         //the only required methods for devices with >iOS 5.0
         NSError *lockError = nil;
         //NSLog(@"Locking device for configuration");
-        if(![[self torchDevice] lockForConfiguration:&lockError]){
-            //NSLog(@"Lock error: %@\nReason: %@", [lockError localizedDescription], [lockError localizedFailureReason]);
+        if(![self.torchDevice lockForConfiguration:&lockError]){
+            NSLog(@"Lock error: %@\nReason: %@", [lockError localizedDescription], [lockError localizedFailureReason]);
         }
         //NSLog(@"Beginning configuration");
         [[self torchSession] beginConfiguration];
-        
+    
         if (torchOn) {
-            [[self torchDevice] setTorchMode:AVCaptureTorchModeOn];
-            [[self torchDevice] setFlashMode:AVCaptureFlashModeOn];
+            self.torchDevice.torchMode = AVCaptureTorchModeOn;
         }
         else {
-            [[self torchDevice] setTorchMode:AVCaptureTorchModeOff];
-            [[self torchDevice] setFlashMode:AVCaptureFlashModeOff];
+            self.torchDevice.torchMode = AVCaptureTorchModeOff;
         }
-        
-        //NSLog(@"Unlocking device for configuration");
-        [[self torchDevice] unlockForConfiguration];
         
         //NSLog(@"Committing configuration");
         [[self torchSession] commitConfiguration];
-    }
         
+        //NSLog(@"Unlocking device for configuration");
+        [self.torchDevice unlockForConfiguration];
+    }
 #endif
 }
 
@@ -202,15 +206,15 @@
 
 - (void)dealloc{
 #if !TARGET_IPHONE_SIMULATOR
-    [_torchDevice release];
-    [_torchDeviceInput release];
-    [_torchOutput release];
+    [_torchDevice release], _torchDevice = nil;
+    [_torchDeviceInput release], _torchDeviceInput = nil;
+    [_torchOutput release], _torchOutput = nil;
 
     
     if ([[self torchSession] isRunning]) {
         [[self torchSession] stopRunning];
     }
-    [_torchSession release];
+    [_torchSession release], _torchSession = nil;
 #endif
     [super dealloc];
 }
