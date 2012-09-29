@@ -179,11 +179,13 @@
         //NSLog(@"Beginning configuration");
         [[self torchSession] beginConfiguration];
     
-        if (torchOn) {
-            self.torchDevice.torchMode = AVCaptureTorchModeOn;
-        }
-        else {
-            self.torchDevice.torchMode = AVCaptureTorchModeOff;
+        if ([self.torchDevice isTorchAvailable] == YES) {
+            if (torchOn) {
+                self.torchDevice.torchMode = AVCaptureTorchModeOn;
+            }
+            else {
+                self.torchDevice.torchMode = AVCaptureTorchModeOff;
+            }
         }
         
         //NSLog(@"Committing configuration");
