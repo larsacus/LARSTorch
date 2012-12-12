@@ -197,6 +197,14 @@
 #endif
 }
 
+- (void)setTorchOnWithLevel:(CGFloat)level{
+    [self.torchDevice lockForConfiguration:nil];
+    
+    [self.torchDevice setTorchModeOnWithLevel:level error:nil];
+    
+    [self.torchDevice unlockForConfiguration];
+}
+
 - (void)setIdleTimerDisabled:(BOOL)disabled{
     [UIApplication sharedApplication].idleTimerDisabled = disabled;
 }
@@ -206,19 +214,5 @@
     [self setTorchOn:[self torchStateOnResume]];
 }
 
-- (void)dealloc{
-#if !TARGET_IPHONE_SIMULATOR
-    [_torchDevice release], _torchDevice = nil;
-    [_torchDeviceInput release], _torchDeviceInput = nil;
-    [_torchOutput release], _torchOutput = nil;
-
-    
-    if ([[self torchSession] isRunning]) {
-        [[self torchSession] stopRunning];
-    }
-    [_torchSession release], _torchSession = nil;
-#endif
-    [super dealloc];
-}
 
 @end

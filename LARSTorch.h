@@ -39,12 +39,13 @@
 @property (nonatomic, retain) AVCaptureDeviceInput *torchDeviceInput;
 @property (nonatomic, retain) AVCaptureOutput *torchOutput;
 #endif
-@property (nonatomic, retain) id delegate;
+@property (nonatomic, strong) id delegate;
 @property (nonatomic) BOOL torchStateOnResume;
 
 
 - (id)initWithTorchOn:(BOOL)torchOn;
 - (void)setTorchOn:(BOOL)torchOn;
+- (void)setTorchOnWithLevel:(CGFloat)level;
 - (BOOL)isTorchOn;
 - (BOOL)isInturrupted;
 - (void)setIdleTimerDisabled:(BOOL)disabled;
