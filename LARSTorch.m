@@ -198,11 +198,13 @@
 }
 
 - (void)setTorchOnWithLevel:(CGFloat)level{
+#if !TARGET_IPHONE_SIMULATOR
     [self.torchDevice lockForConfiguration:nil];
     
     [self.torchDevice setTorchModeOnWithLevel:level error:nil];
     
     [self.torchDevice unlockForConfiguration];
+#endif
 }
 
 - (void)setIdleTimerDisabled:(BOOL)disabled{
