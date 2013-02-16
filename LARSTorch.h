@@ -14,40 +14,45 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 
-@interface LARSTorch : NSObject {
-    
-@private
+typedef NS_ENUM(BOOL, LARSTorchState){
+    LARSTorchStateOn = YES,
+    LARSTorchStateOff = NO
+};
 
-    float _systemVersion;
-#if !TARGET_IPHONE_SIMULATOR
-    AVCaptureSession *_torchSession;
-    AVCaptureDevice *_torchDevice;
-    AVCaptureDeviceInput *_torchDeviceInput;
-    AVCaptureOutput *_torchOutput;
-#endif
-    id _delegate;
-    BOOL _torchStateOnResume;
-}
+@interface LARSTorch : NSObject
 
+/** A convenience shared torch instance.
+ */
++ (instancetype)sharedTorch;
 
-@property (nonatomic) float systemVersion;
-#if !TARGET_IPHONE_SIMULATOR
-@property (nonatomic, retain) AVCaptureSession *torchSession;
-@property (nonatomic, retain) AVCaptureDevice *torchDevice;
-@property (nonatomic, retain) AVCaptureDeviceInput *torchDeviceInput;
-@property (nonatomic, retain) AVCaptureOutput *torchOutput;
-#endif
-@property (nonatomic, strong) id delegate;
-@property (nonatomic) BOOL torchStateOnResume;
+/** Initializes a new torch instance with a given torch state
+ 
+ @param torchOn A LARSTorchState that indicates if the light should intially be turned on or not
+ */
+- (instancetype)initWithTorchState:(LARSTorchState)torchOn;
 
+/** Sets torch mode to designated boolean torch state.
+ 
+ @param torchState The state to set the torch to.
+ */
+- (void)setTorchState:(LARSTorchState)torchState;
 
-- (id)initWithTorchOn:(BOOL)torchOn;
-- (void)setTorchOn:(BOOL)torchOn;
-- (void)setTorchOnWithLevel:(CGFloat)level;
+/** Sets torch mode to "on" state with a given torch "level"
+ 
+ @discussion The torch level must be between 0.f and 1.f
+ @param level A torch level between 0 and 1
+ */
+- (BOOL)setTorchOnWithLevel:(CGFloat)level;
+
+/** Indicates if torch is currently turned on or not.
+ */
 - (BOOL)isTorchOn;
+
+/** Indicates if the torch is currently in an "inturruped" state or not. This may happen if the torch was running while your application went into a suspended state.
+ 
+ @warning This value may not ever return true on iOS 5.0 and greater as iOS no longer requires an AVCaptureSession to turn on the torch.
+ */
 - (BOOL)isInturrupted;
-- (void)setIdleTimerDisabled:(BOOL)disabled;
 
 @end
