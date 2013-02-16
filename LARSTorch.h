@@ -43,7 +43,7 @@ typedef NS_ENUM(BOOL, LARSTorchState){
  @discussion The torch level must be between 0.f and 1.f
  @param level A torch level between 0 and 1
  */
-- (BOOL)setTorchOnWithLevel:(CGFloat)level;
+- (BOOL)setTorchOnWithLevel:(CGFloat)level NS_AVAILABLE_IOS(6_0);
 
 /** Indicates if torch is currently turned on or not.
  */
@@ -53,6 +53,6 @@ typedef NS_ENUM(BOOL, LARSTorchState){
  
  @warning This value may not ever return true on iOS 5.0 and greater as iOS no longer requires an AVCaptureSession to turn on the torch.
  */
-- (BOOL)isInturrupted;
+- (BOOL)isInturrupted NS_DEPRECATED_IOS(4_0, 5_0);
 
 @end

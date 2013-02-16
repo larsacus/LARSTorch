@@ -1,20 +1,36 @@
 # LARSTorch
 
 ## Description
-It's a LED driver for iOS.  Does it need more of a description than that?
+It's an AVFoundation-based LED driver for iOS.  Does it need more of a description than that?
 
 ## Usage
-`[[LARSTorch alloc] initWithTorchOn:YES];`
+``` objective-c
+[[LARSTorch alloc] initWithTorchOn:YES];
+```
+or via the singleton:
+```objective-c
+[[LARSTorch sharedTorch] setTorchState:LARSTorchStateOn];
+```
 
 ## Public Methods
- - `- (BOOL)isTorchOn` - Replies if the torch is currently on (`YES`) or off (`NO`)
- - `- (BOOL)isInturrupted` - Replies if the `AVCaptureSession` for the torch has been inturrupted by a system event
- - `- (void)setTorchOn:(BOOL)torchOn` - Method to light or extinguish the torch
+```objective-c
+/* Replies with a boolean if the torch is currently on */
+- (BOOL)isTorchOn;
+
+/* Replies if the `AVCaptureSession` for the torch has been interrupted by a system event */
+- (BOOL)isInturrupted;
+
+/* Method to light or extinguish the torch */
+- (void)setTorchState:(LARSTorchState)torchState;
+
+/* Sets torch on with a given non-maximum torch level */
+- (BOOL)setTorchOnWithLevel:(CGFloat)level;
+```
 
 That's it.
 
 ## License
-Copyright (c) 2011 Lars Anderson, drink&apple
+Copyright (c) 2011 Lars Anderson, theonlylars
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
