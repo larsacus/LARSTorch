@@ -203,12 +203,14 @@ static LARSTorch *__sharedTorch = nil;
 }
 
 - (void)dealloc{
+#if !TARGET_IPHONE_SIMULATOR
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     self.torchDevice = nil;
     self.torchSession = nil;
     self.torchDeviceInput = nil;
     self.torchOutput = nil;
+#endif
 }
 
 @end
