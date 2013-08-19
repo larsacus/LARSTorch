@@ -22,9 +22,15 @@ typedef NS_ENUM(BOOL, LARSTorchState){
 
 @interface LARSTorch : NSObject
 
+@property (nonatomic) LARSTorchState torchStateOnResume;
+
 /** A convenience shared torch instance.
  */
 + (instancetype)sharedTorch;
+
+/** A boolean that indicates whether or not a torch is available
+ */
++ (BOOL)isTorchAvailable;
 
 /** Initializes a new torch instance with a given torch state
  

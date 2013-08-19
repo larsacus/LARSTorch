@@ -26,7 +26,6 @@
 @property (nonatomic, retain) AVCaptureDeviceInput *torchDeviceInput;
 @property (nonatomic, retain) AVCaptureOutput *torchOutput;
 #endif
-@property (nonatomic) LARSTorchState torchStateOnResume;
 
 @end
 
@@ -41,6 +40,10 @@ static LARSTorch *__sharedTorch = nil;
     });
     
     return __sharedTorch;
+}
+
++ (BOOL)isTorchAvailable{
+    return ([[LARSTorch sharedTorch] torchDevice] != nil);
 }
 
 - (instancetype)init{
@@ -91,7 +94,13 @@ static LARSTorch *__sharedTorch = nil;
 #if !TARGET_IPHONE_SIMULATOR
 - (AVCaptureDevice *)torchDevice{
     if (_torchDevice == nil) {
-        _torchDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        NSArray *videoDevices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        for (AVCaptureDevice *device in videoDevices) {
+            if ([device isTorchModeSupported:AVCaptureTorchModeOn]) {
+                _torchDevice = device;
+                break;
+            }
+        }
     }
     
     return _torchDevice;
