@@ -91,8 +91,9 @@ static LARSTorch *__sharedTorch = nil;
 #endif
 }
 
-#if !TARGET_IPHONE_SIMULATOR
+
 - (AVCaptureDevice *)torchDevice{
+#if !TARGET_IPHONE_SIMULATOR
     if (_torchDevice == nil) {
         NSArray *videoDevices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
         for (AVCaptureDevice *device in videoDevices) {
@@ -104,9 +105,10 @@ static LARSTorch *__sharedTorch = nil;
     }
     
     return _torchDevice;
-}
-
+#else
+    return nil;
 #endif
+}
 
 - (void)setTorchState:(LARSTorchState)torchOn{
 #if !TARGET_IPHONE_SIMULATOR
