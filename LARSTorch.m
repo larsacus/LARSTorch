@@ -43,7 +43,11 @@ static LARSTorch *__sharedTorch = nil;
 }
 
 + (BOOL)isTorchAvailable{
+#if !TARGET_IPHONE_SIMULATOR
     return ([[LARSTorch sharedTorch] torchDevice] != nil);
+#else
+    return YES;
+#endif
 }
 
 - (instancetype)init{
