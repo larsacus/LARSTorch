@@ -46,7 +46,7 @@ static LARSTorch *__sharedTorch = nil;
 #if !TARGET_IPHONE_SIMULATOR
     return ([[LARSTorch sharedTorch] torchDevice] != nil);
 #else
-    return YES;
+    return NO;
 #endif
 }
 
