@@ -127,8 +127,10 @@ static LARSTorch *__sharedTorch = nil;
             [self.torchSession setSessionPreset:AVCaptureSessionPresetLow];
             
             NSError *lockError = nil;
-            if(![self.torchDevice lockForConfiguration:&lockError]){
+            if(self.torchDevice && [self.torchDevice lockForConfiguration:&lockError] == NO){
                 NSLog(@"%@ Lock error: %@\nReason: %@",self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
+                [self.torchDevice unlockForConfiguration];
+                return;
             }
             
             [[self torchSession] beginConfiguration];
@@ -178,8 +180,10 @@ static LARSTorch *__sharedTorch = nil;
     else{
         //the only required methods for devices with >iOS 5.0
         NSError *lockError = nil;
-        if(![self.torchDevice lockForConfiguration:&lockError]){
+        if(self.torchDevice && [self.torchDevice lockForConfiguration:&lockError] == NO){
             NSLog(@"%@ Lock error: %@\nReason: %@", self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
+            [self.torchDevice unlockForConfiguration];
+            return;
         }
         
         [self.torchSession beginConfiguration];
@@ -194,7 +198,7 @@ static LARSTorch *__sharedTorch = nil;
         }
         
         [self.torchSession commitConfiguration];
-        [self.torchDevice unlockForConfiguration];
+        
     }
 #endif
 }
