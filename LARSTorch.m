@@ -17,6 +17,24 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
+#ifdef LOG_FLAG_ERROR
+
+#define TOL_FLASH_LOG_CONTEXT 912
+#define TOLFlashLogError(frmt, ...)     SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_ERROR,   TOL_FLASH_LOG_CONTEXT, @"%s [Line %d] " frmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define TOLFlashLogWarn(frmt, ...)     ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_WARN,    TOL_FLASH_LOG_CONTEXT, @"%s [Line %d] " frmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define TOLFlashLogInfo(frmt, ...)     ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_INFO,    TOL_FLASH_LOG_CONTEXT, @"%s [Line %d] " frmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define TOLFlashLogDebug(frmt, ...)     ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_DEBUG,  TOL_FLASH_LOG_CONTEXT, @"%s [Line %d] " frmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define TOLFlashLogVerbose(frmt, ...)  ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_VERBOSE, TOL_FLASH_LOG_CONTEXT, @"%s [Line %d] " frmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+#else
+#define TOLFlashLogError(frmt, ...)    NSLog(frmt, ##__VA_ARGS__)
+#define TOLFlashLogWarn(frmt, ...)     NSLog(frmt, ##__VA_ARGS__)
+#define TOLFlashLogInfo(frmt, ...)     NSLog(frmt, ##__VA_ARGS__)
+#define TOLFlashLogDebug(frmt, ...)    NSLog(frmt, ##__VA_ARGS__)
+#define TOLFlashLogVerbose(frmt, ...)  NSLog(frmt, ##__VA_ARGS__)
+
+#endif
+
 @interface LARSTorch ()
 
 @property (nonatomic) CGFloat systemVersion;
@@ -117,6 +135,7 @@ static LARSTorch *__sharedTorch = nil;
 - (void)setTorchState:(LARSTorchState)torchOn{
 #if !TARGET_IPHONE_SIMULATOR
     if ([self systemVersion] < 5.0f){
+        TOLFlashLogInfo(@"Using pre-5.0 flash method: iOS %1.1f", self.systemVersion);
         if (self.torchSession == nil) {
             _torchSession = [[AVCaptureSession alloc] init];
         }
@@ -128,7 +147,7 @@ static LARSTorch *__sharedTorch = nil;
             
             NSError *lockError = nil;
             if(self.torchDevice && [self.torchDevice lockForConfiguration:&lockError] == NO){
-                NSLog(@"%@ Lock error: %@\nReason: %@",self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
+                TOLFlashLogError(@"%@ Lock error: %@\nReason: %@",self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
                 [self.torchDevice unlockForConfiguration];
                 return;
             }
@@ -142,7 +161,7 @@ static LARSTorch *__sharedTorch = nil;
                     _torchDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.torchDevice error:&deviceError];
                     
                     if (deviceError) {
-                        NSLog(@"%@ Device Error: %@\nReason: %@",
+                        TOLFlashLogError(@"%@ Device Error: %@\nReason: %@",
                               self.class,
                               [deviceError localizedDescription], [deviceError localizedFailureReason]);
                     }
@@ -179,9 +198,10 @@ static LARSTorch *__sharedTorch = nil;
     }
     else{
         //the only required methods for devices with >iOS 5.0
+        TOLFlashLogInfo(@"Using post-5.0 torch method: iOS %1.1f", self.systemVersion);
         NSError *lockError = nil;
         if(self.torchDevice && [self.torchDevice lockForConfiguration:&lockError] == NO){
-            NSLog(@"%@ Lock error: %@\nReason: %@", self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
+            TOLFlashLogError(@"%@ Lock error: %@\nReason: %@", self.class, [lockError localizedDescription], [lockError localizedFailureReason]);
             [self.torchDevice unlockForConfiguration];
             return;
         }
@@ -233,3 +253,10 @@ static LARSTorch *__sharedTorch = nil;
 }
 
 @end
+
+#undef TOL_FLASH_LOG_CONTEXT
+#undef TOLFlashLogError
+#undef TOLFlashLogWarn
+#undef TOLFlashLogInfo
+#undef TOLFlashLogDebug
+#undef TOLFlashLogVerbose
