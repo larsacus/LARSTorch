@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'LARSTorch'
-  s.version      = '1.0.0'
+  s.version      = '1.1.0'
   s.summary      = 'Lightweight AVFoundation-based interface to access your iDevice\'s LED torch.'
   s.homepage     = 'https://github.com/larsacus/LARSTorch'
   s.author = {
